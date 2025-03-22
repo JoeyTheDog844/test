@@ -1,0 +1,216 @@
+import tkinter as tk
+from PIL import Image, ImageTk  # Import Pillow for resizing images
+import disable_services_gui
+from tkinter import messagebox
+import automate_rdp_services
+import password_policy
+
+def on_enter(e, button):
+    button.config(bg='#3a3a3a', relief='raised')
+
+def on_leave(e, button):
+    button.config(bg='black', relief='flat')
+
+image_path = r"C:\Users\amaan\Desktop\Coding\doggy.jpg"
+
+root = tk.Tk()
+root.geometry('700x500')
+root.title('CyberSecurity Audit Application')
+root.configure(bg='black')
+
+def show_automate_services():
+    for widget in automateservices_frame.winfo_children():
+        widget.destroy()
+
+    service_statuses = disable_services_gui.check_all_services()
+
+    for i, (service, status) in enumerate(service_statuses.items()):
+        tk.Label(automateservices_frame, text=service, font=("Arial", 10), anchor="w", bg='black', fg='white').grid(row=i, column=0, sticky="w", padx=5, pady=2)
+        tk.Label(automateservices_frame, text=status, font=("Arial", 10), fg="green" if status == "Running" else "red", bg='black').grid(row=i, column=1, padx=5, pady=2)
+
+    stop_button = tk.Button(automateservices_frame, text="STOP ALL SERVICES", font=("Bold", 12), bg="red", fg="white", command=stop_automate_services)
+    stop_button.grid(row=len(service_statuses) + 1, column=0, padx=5, pady=10)
+
+    start_button = tk.Button(automateservices_frame, text="START ALL SERVICES", font=("Bold", 12), bg="green", fg="white", command=start_automate_services)
+    start_button.grid(row=len(service_statuses) + 1, column=1, padx=5, pady=10)
+
+    disable_button = tk.Button(automateservices_frame, text="DISABLE ALL SERVICES", font=("Bold", 12), bg="gray", fg="white", command=disable_automate_services)
+    disable_button.grid(row=len(service_statuses) + 2, column=0, columnspan=2, padx=5, pady=10)
+
+def stop_automate_services():
+    stopped_services, failed_services = disable_services_gui.stop_all_services()
+    if stopped_services:
+        messagebox.showinfo("Services Stopped", f"Successfully stopped:\n" + "\n".join(stopped_services))
+    if failed_services:
+        messagebox.showwarning("Failed to Stop", f"Could not stop:\n" + "\n".join(failed_services))
+    show_automate_services()
+
+def start_automate_services():
+    started_services, failed_services = disable_services_gui.start_all_services()
+    if started_services:
+        messagebox.showinfo("Services Started", f"Successfully started:\n" + "\n".join(started_services))
+    if failed_services:
+        messagebox.showwarning("Failed to Start", f"Could not start:\n" + "\n".join(failed_services))
+    show_automate_services()
+
+def disable_automate_services():
+    disabled_services, failed_services = disable_services_gui.disable_all_services()
+    if disabled_services:
+        messagebox.showinfo("Services Disabled", f"Successfully disabled:\n" + "\n".join(disabled_services))
+    if failed_services:
+        messagebox.showwarning("Failed to Disable", f"Could not disable:\n" + "\n".join(failed_services))
+    show_automate_services()
+
+def automateservices_page():
+    delete_pages()
+    global automateservices_frame
+    automateservices_frame = tk.Frame(main_frame, bg='black')
+    automateservices_frame.pack(pady=10, fill="both", expand=True)
+    show_automate_services()
+
+def show_rdp_services():
+    for widget in rdp_services_frame.winfo_children():
+        widget.destroy()
+
+    service_statuses = automate_rdp_services.check_services_status()
+
+    for i, (service, status) in enumerate(service_statuses.items()):
+        tk.Label(rdp_services_frame, text=service, font=("Arial", 10), anchor="w", bg='black', fg='white').grid(row=i, column=0, sticky="w", padx=5, pady=2)
+        tk.Label(rdp_services_frame, text=status, font=("Arial", 10), fg="green" if status == "Running" else "red", bg='black').grid(row=i, column=1, padx=5, pady=2)
+
+    stop_button = tk.Button(rdp_services_frame, text="STOP SERVICES", font=("Bold", 12), bg="red", fg="white", command=stop_rdp_services)
+    stop_button.grid(row=len(service_statuses) + 1, column=0, padx=5, pady=10)
+
+    start_button = tk.Button(rdp_services_frame, text="ENABLE SERVICES", font=("Bold", 12), bg="green", fg="white", command=enable_rdp_services)
+    start_button.grid(row=len(service_statuses) + 1, column=1, padx=5, pady=10)
+
+    disable_button = tk.Button(rdp_services_frame, text="DISABLE SERVICES", font=("Bold", 12), bg="gray", fg="white", command=disable_rdp_services)
+    disable_button.grid(row=len(service_statuses) + 2, column=0, columnspan=2, padx=5, pady=10)
+
+def stop_rdp_services():
+    stopped_services, failed_services = automate_rdp_services.stop_services()
+    if stopped_services:
+        messagebox.showinfo("Services Stopped", f"Successfully stopped:\n" + "\n".join(stopped_services))
+    if failed_services:
+        messagebox.showwarning("Failed to Stop", f"Could not stop:\n" + "\n".join(failed_services))
+    show_rdp_services()
+
+def enable_rdp_services():
+    enabled_services, failed_services = automate_rdp_services.enable_services()
+    if enabled_services:
+        messagebox.showinfo("Services Enabled", f"Successfully enabled:\n" + "\n".join(enabled_services))
+    if failed_services:
+        messagebox.showwarning("Failed to Enable", f"Could not enable:\n" + "\n".join(failed_services))
+    show_rdp_services()
+
+def disable_rdp_services():
+    disabled_services, failed_services = automate_rdp_services.disable_services()
+    if disabled_services:
+        messagebox.showinfo("Services Disabled", f"Successfully disabled:\n" + "\n".join(disabled_services))
+    if failed_services:
+        messagebox.showwarning("Failed to Disable", f"Could not disable:\n" + "\n".join(failed_services))
+    show_rdp_services()
+
+def rdp_services_page():
+    delete_pages()
+    global rdp_services_frame
+    rdp_services_frame = tk.Frame(main_frame, bg='black')
+    rdp_services_frame.pack(pady=10, fill="both", expand=True)
+    show_rdp_services()
+
+def show_password_policy():
+    delete_pages()
+    global password_policy_frame
+    password_policy_frame = tk.Frame(main_frame, bg='black')
+    password_policy_frame.pack(pady=10, fill="both", expand=True)
+    policy_text = password_policy.get_current_policy()
+    policy_label = tk.Label(password_policy_frame, text="Current Password Policy:\n\n" + policy_text,
+                            font=("Arial", 10), anchor="w", justify="left", bg='black', fg='white')
+    policy_label.pack(padx=10, pady=10)
+    apply_button = tk.Button(password_policy_frame, text="APPLY PASSWORD POLICY", font=("Bold", 12),
+                             bg="blue", fg="white", command=apply_password_policy)
+    apply_button.pack(pady=10)
+
+def apply_password_policy():
+    confirm = messagebox.askyesno("Confirm Policy Change", "Are you sure you want to apply the new password policy?")
+    if confirm:
+        result = password_policy.set_password_policy()
+        messagebox.showinfo("Password Policy Updated", result)
+        show_password_policy()
+
+def home_page():
+    home_frame = tk.Frame(main_frame, bg='black')
+    lb = tk.Label(home_frame, text='CyberSecurity Audit Application\n\nPage: 1', font=('Bold', 30), bg='black', fg='white')
+    lb.pack()
+    home_frame.pack(pady=20)
+
+def hide_indicators():
+    home_indicate.config(bg='black')
+    automateservices_indicate.config(bg='black')
+    rdp_services_indicate.config(bg='black')
+    password_policy_indicate.config(bg='black')
+
+def delete_pages():
+    for frame in main_frame.winfo_children():
+        frame.destroy()
+
+def indicate(lb, page):
+    hide_indicators()
+    lb.config(bg='#158aff')
+    delete_pages()
+    page()
+
+sidebar_frame = tk.Frame(root, bg='black')
+options_frame = tk.Frame(sidebar_frame, bg='black', width=140, height=600)
+options_frame.configure(width=140, height=600)
+
+try:
+    original_image = Image.open(image_path)
+    resized_image = original_image.resize((95, 95), Image.LANCZOS)
+    logo_img = ImageTk.PhotoImage(resized_image)
+    logo_label = tk.Label(sidebar_frame, image=logo_img, bg='black')
+    logo_label.pack(pady=10)
+except Exception as e:
+    print(f"Error loading logo: {e}")
+
+home_indicate = tk.Label(options_frame, text='', bg='black')
+home_indicate.grid(row=0, column=0, sticky="w", padx=5)
+
+automateservices_indicate = tk.Label(options_frame, text='', bg='black')
+automateservices_indicate.grid(row=1, column=0, sticky="w", padx=5)
+
+rdp_services_indicate = tk.Label(options_frame, text='', bg='black')
+rdp_services_indicate.grid(row=2, column=0, sticky="w", padx=5)
+
+password_policy_indicate = tk.Label(options_frame, text='', bg='black')
+password_policy_indicate.grid(row=3, column=0, sticky="w", padx=5)
+
+options_frame.grid_columnconfigure(1, weight=1)
+
+home_btn = tk.Button(options_frame, text='HOME', font=('Bold', 15), fg='#158aff', bd=0, bg='black', relief='flat', command=lambda: indicate(home_indicate, home_page))
+home_btn.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
+home_btn.bind('<Enter>', lambda e: on_enter(e, home_btn))
+home_btn.bind('<Leave>', lambda e: on_leave(e, home_btn))
+
+automateservices_btn = tk.Button(options_frame, text='DISABLE\nSERVICES', font=('Bold', 15), fg='#158aff', bd=0, bg='black', relief='flat', command=lambda: indicate(automateservices_indicate, automateservices_page))
+automateservices_btn.grid(row=1, column=1, sticky="ew", padx=10, pady=10)
+automateservices_btn.bind('<Enter>', lambda e: on_enter(e, automateservices_btn))
+automateservices_btn.bind('<Leave>', lambda e: on_leave(e, automateservices_btn))
+
+rdp_services_btn = tk.Button(options_frame, text='AUTOMATE\nRDP SERVICES', font=('Bold', 15), fg='#158aff', bd=0, bg='black', relief='flat', command=lambda: indicate(rdp_services_indicate, rdp_services_page))
+rdp_services_btn.grid(row=2, column=1, sticky="ew", padx=10, pady=10)
+rdp_services_btn.bind('<Enter>', lambda e: on_enter(e, rdp_services_btn))
+rdp_services_btn.bind('<Leave>', lambda e: on_leave(e, rdp_services_btn))
+
+password_policy_btn = tk.Button(options_frame, text="SET PASSWORD\nPOLICY", font=('Bold', 15), fg='#158aff', bd=0, bg='black', relief='flat', command=lambda: indicate(password_policy_indicate, show_password_policy))
+password_policy_btn.grid(row=3, column=1, sticky="ew", padx=10, pady=10)
+password_policy_btn.bind('<Enter>', lambda e: on_enter(e, password_policy_btn))
+password_policy_btn.bind('<Leave>', lambda e: on_leave(e, password_policy_btn))
+
+options_frame.pack(fill="both", expand=False)
+sidebar_frame.pack(side=tk.LEFT, fill="y")
+
+main_frame = tk.Frame(root, bg='black', highlightbackground='black', highlightthickness=2)
+main_frame.pack(side=tk.LEFT, fill="both", expand=True)
+
+root.mainloop()
